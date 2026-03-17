@@ -174,11 +174,13 @@
     border-radius: 12px;
     border: 1px solid rgba(30, 41, 59, 0.8);
   }
-  .table-container table {
+  .table-container table,
+  .glass-card table {
     width: 100%;
     border-collapse: collapse;
   }
-  .table-container th {
+  .table-container th,
+  .glass-card th {
     padding: 14px 16px;
     text-align: left;
     font-weight: 600;
@@ -188,17 +190,21 @@
     color: #94a3b8;
     background: rgba(15, 23, 42, 0.6);
     border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+    white-space: nowrap;
   }
-  .table-container td {
+  .table-container td,
+  .glass-card td {
     padding: 14px 16px;
     font-size: 14px;
     border-bottom: 1px solid rgba(30, 41, 59, 0.4);
     color: #e2e8f0;
   }
-  .table-container tr {
+  .table-container tr,
+  .glass-card tr {
     transition: background 0.2s ease;
   }
-  .table-container tbody tr:hover {
+  .table-container tbody tr:hover,
+  .glass-card tbody tr:hover {
     background: rgba(14, 165, 233, 0.05);
   }
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useMemo, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Package } from "lucide-react";
 import Link from "next/link";
+import { CustomFieldsForm, getFieldsForCategory } from "@/components/CustomFieldsForm";
 
 export default function EditAssetPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -19,6 +20,7 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
     categoryId: "", locationId: "", manufacturerId: "",
     purchaseDate: "", purchaseCost: "", warrantyExpiry: "", notes: "",
   });
+  const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
   useEffect(() => {
     Promise.all([
@@ -40,6 +42,10 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
         warrantyExpiry: asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toISOString().split("T")[0] : "",
         notes: asset.notes || "",
       });
+      // Parse existing custom fields
+      if (asset.customFields) {
+        try { setCustomFields(JSON.parse(asset.customFields)); } catch { /* ignore */ }
+      }
       setCategories(c);
       setLocations(l);
       setManufacturers(m);
@@ -47,14 +53,26 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
     });
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const selectedCategory = useMemo(
+    () => categories.find((c) => c.id === form.categoryId),
+    [categories, form.categoryId],
+  );
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    const hasFields = getFieldsForCategory(selectedCategory?.name || "");
+    const body = {
+      ...form,
+      customFields: hasFields ? JSON.stringify(customFields) : null,
+    };
+
     const res = await fetch(`/api/assets/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(body),
     });
     if (res.ok) {
       router.push(`/assets/${id}`);
@@ -63,9 +81,12 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
       setError(data.error || "Lỗi cập nhật thiết bị");
     }
     setLoading(false);
-  };
+  }, [form, customFields, selectedCategory, id, router]);
 
-  const updateForm = (key: string, value: string) => setForm({ ...form, [key]: value });
+  const updateForm = useCallback((key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    if (key === "categoryId") setCustomFields({});
+  }, []);
 
   if (fetching) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-sky-500/30 border-t-sky-500 rounded-full animate-spin" /></div>;
 
@@ -135,7 +156,17 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
             <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">Hết bảo hành</label>
             <input type="date" value={form.warrantyExpiry} onChange={(e) => updateForm("warrantyExpiry", e.target.value)} className="input-field" />
           </div>
+
+          {/* Dynamic custom fields based on category */}
+          {selectedCategory && (
+            <CustomFieldsForm
+              categoryName={selectedCategory.name}
+              values={customFields}
+              onChange={setCustomFields}
+            />
+          )}
         </div>
+
         <div>
           <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">Ghi chú</label>
           <textarea value={form.notes} onChange={(e) => updateForm("notes", e.target.value)} className="input-field min-h-[80px] resize-y" />

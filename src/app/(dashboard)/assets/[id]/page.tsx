@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import {
   ArrowLeft, Edit, Wrench, UserCheck, UserX, Package,
   Calendar, MapPin, Factory, Tag, DollarSign, Clock, FileText,
-  CheckCircle,
+  CheckCircle, Cpu,
 } from "lucide-react";
 import { cn, getStatusInfo, formatCurrency, formatDate, formatDateTime, hasPermission } from "@/lib/utils";
 
@@ -160,6 +160,39 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
           )}
         </div>
       </div>
+
+      {/* Custom Fields (PC Components, Monitor Ports, etc.) */}
+      {asset.customFields && (() => {
+        try {
+          const cf = JSON.parse(asset.customFields);
+          const entries = Object.entries(cf).filter(([, v]) => v);
+          if (entries.length === 0) return null;
+
+          const LABELS: Record<string, string> = {
+            cpu: "CPU", ram: "RAM", ssd: "SSD", hdd: "HDD", vga: "VGA / GPU",
+            psu: "Nguồn (PSU)", case: "Case", mainboard: "Mainboard",
+            screenSize: "Kích thước", resolution: "Độ phân giải",
+            panelType: "Loại panel", refreshRate: "Tần số quét", ports: "Cổng kết nối",
+          };
+
+          return (
+            <div className="glass-card p-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Cpu size={18} className="text-sky-400" />
+                Thông số kỹ thuật
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {entries.map(([key, val]) => (
+                  <div key={key} className="flex items-center gap-3 text-sm p-2 rounded-lg bg-white/[0.02]">
+                    <span className="text-[var(--color-text-muted)] w-32 shrink-0 font-medium">{LABELS[key] || key}</span>
+                    <span className="text-sky-300 font-medium">{String(val)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        } catch { return null; }
+      })()}
 
       {/* Checkout History */}
       <div className="glass-card p-6">

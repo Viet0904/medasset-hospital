@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const [assets, total] = await Promise.all([
       prisma.asset.findMany({
         where,
-        include: { category: true, location: true, manufacturer: true },
+        include: { category: true, location: true, manufacturer: true, supplier: true },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
         purchaseCost: body.purchaseCost ? parseFloat(body.purchaseCost) : null,
         warrantyExpiry: body.warrantyExpiry ? new Date(body.warrantyExpiry) : null,
         notes: body.notes || null,
+        customFields: body.customFields || null,
         categoryId: body.categoryId || null,
         locationId: body.locationId || null,
         manufacturerId: body.manufacturerId || null,

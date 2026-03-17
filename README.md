@@ -17,7 +17,7 @@
 | Tính năng | Mô tả |
 |---|---|
 | 📊 **Dashboard** | Thống kê tổng quan với biểu đồ tròn, biểu đồ cột, hoạt động gần đây |
-| 📦 **Quản lý Thiết bị** | CRUD đầy đủ, tìm kiếm, lọc theo trạng thái/danh mục/vị trí, phân trang |
+| 📦 **Quản lý Thiết bị** | CRUD đầy đủ, tìm kiếm, lọc theo trạng thái/danh mục/vị trí, phân trang, ẩn/hiện cột |
 | 🔄 **Cấp phát / Thu hồi** | Checkout/Checkin thiết bị cho nhân viên, lưu lịch sử |
 | 📁 **Danh mục** | Phân loại thiết bị (MRI, X-quang, máy in, máy tính...) |
 | 📍 **Vị trí** | Quản lý khoa/phòng (Khoa Nội, Phòng IT, Phòng Mổ...) |
@@ -94,11 +94,11 @@ Mở trình duyệt tại **http://localhost:3000**
 
 ## 🔑 Tài khoản Demo
 
-| Vai trò | Email | Mật khẩu | Quyền hạn |
+| Vai trò | Username | Mật khẩu | Quyền hạn |
 |---|---|---|---|
-| 🔴 Admin | `admin@hospital.vn` | `admin123` | Toàn quyền (quản lý user, audit log) |
-| 🟡 Manager | `manager@hospital.vn` | `manager123` | CRUD thiết bị, danh mục, báo cáo |
-| 🟢 Staff | `staff@hospital.vn` | `staff123` | Xem thiết bị, xem dashboard |
+| 🔴 Admin | `admin` | `admin123` | Toàn quyền (quản lý user, audit log) |
+| 🟡 Manager | `manager` | `manager123` | CRUD thiết bị, danh mục, báo cáo |
+| 🟢 Staff | `staff` | `staff123` | Xem thiết bị, xem dashboard |
 
 ---
 

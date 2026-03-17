@@ -41,6 +41,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         purchaseCost: body.purchaseCost ? parseFloat(body.purchaseCost) : null,
         warrantyExpiry: body.warrantyExpiry ? new Date(body.warrantyExpiry) : null,
         notes: body.notes || null,
+        customFields: body.customFields || null,
         categoryId: body.categoryId || null,
         locationId: body.locationId || null,
         manufacturerId: body.manufacturerId || null,

@@ -84,6 +84,7 @@ model Asset {
   warrantyExpiry  DateTime?
   notes           String?
   image           String?
+  customFields    String?  // JSON: linh kiện PC, cổng màn hình, etc.
 
   categoryId      String?
   category        Category?     @relation(fields: [categoryId], references: [id])

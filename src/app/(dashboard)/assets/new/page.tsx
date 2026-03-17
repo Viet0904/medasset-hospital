@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ArrowLeft, Save, Package } from "lucide-react";
 import Link from "next/link";
+import { CustomFieldsForm, getFieldsForCategory } from "@/components/CustomFieldsForm";
 
 export default function NewAssetPage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function NewAssetPage() {
     categoryId: "", locationId: "", manufacturerId: "",
     purchaseDate: "", purchaseCost: "", warrantyExpiry: "", notes: "",
   });
+  const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
   useEffect(() => {
     Promise.all([
@@ -32,15 +34,26 @@ export default function NewAssetPage() {
     });
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const selectedCategory = useMemo(
+    () => categories.find((c) => c.id === form.categoryId),
+    [categories, form.categoryId],
+  );
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
+    const hasFields = getFieldsForCategory(selectedCategory?.name || "");
+    const body = {
+      ...form,
+      customFields: hasFields ? JSON.stringify(customFields) : null,
+    };
+
     const res = await fetch("/api/assets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(body),
     });
 
     if (res.ok) {
@@ -50,9 +63,13 @@ export default function NewAssetPage() {
       setError(data.error || "Lỗi tạo thiết bị");
     }
     setLoading(false);
-  };
+  }, [form, customFields, selectedCategory, router]);
 
-  const updateForm = (key: string, value: string) => setForm({ ...form, [key]: value });
+  const updateForm = useCallback((key: string, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    // Reset custom fields khi đổi danh mục
+    if (key === "categoryId") setCustomFields({});
+  }, []);
 
   return (
     <div className="fade-in space-y-6 max-w-4xl">
@@ -129,6 +146,15 @@ export default function NewAssetPage() {
             <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">Hết bảo hành</label>
             <input type="date" value={form.warrantyExpiry} onChange={(e) => updateForm("warrantyExpiry", e.target.value)} className="input-field" />
           </div>
+
+          {/* Dynamic custom fields based on category */}
+          {selectedCategory && (
+            <CustomFieldsForm
+              categoryName={selectedCategory.name}
+              values={customFields}
+              onChange={setCustomFields}
+            />
+          )}
         </div>
 
         <div>

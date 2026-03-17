@@ -28,8 +28,8 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen flex">
       <Sidebar />
-      <main className="flex-1 min-w-0 p-4 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-1 min-w-0 p-4 lg:p-6 overflow-auto">
+        <div className="w-full">
           {children}
         </div>
       </main>

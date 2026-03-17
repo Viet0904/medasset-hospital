@@ -131,7 +131,7 @@ cp prisma/backup_2026-03-17.db prisma/dev.db
 
 Truy cập **http://localhost:3000** → tự động chuyển đến trang đăng nhập.
 
-Bấm vào nút tài khoản demo (Admin/Manager/Staff) để tự điền email+mật khẩu, sau đó bấm **Đăng nhập**.
+Bấm vào nút tài khoản demo (Admin/Manager/Staff) để tự điền username+mật khẩu, sau đó bấm **Đăng nhập**.
 
 ### 4.2. Dashboard (Tổng quan)
 
@@ -148,6 +148,8 @@ Sau khi đăng nhập, bạn thấy:
 - Tìm kiếm theo tên, mã, serial
 - Lọc theo trạng thái (Sẵn sàng, Đang sử dụng, Bảo trì, Hỏng, Thanh lý)
 - Lọc theo danh mục
+- Phân trang (10/20/50/100 dòng mỗi trang)
+- Ẩn/hiện cột: bấm nút **"Cột"** để chọn cột muốn hiển thị (lưu tự động)
 
 **Thêm thiết bị:** Bấm "Thêm thiết bị" → điền form → "Lưu thiết bị"
 
@@ -171,7 +173,7 @@ Sidebar → "Bảo trì" → "Tạo phiếu bảo trì"
 
 ### 4.6. Quản lý Danh mục / Vị trí / Nhà sản xuất
 
-Các trang quản lý hiển thị dạng **grid cards** — bấm nút "Thêm" để tạo mới, bấm ✏️ để sửa, 🗑️ để xóa.
+Các trang quản lý hiển thị dạng **bảng (table)** với phân trang (10/20/50 dòng mỗi trang). Bấm nút "Thêm" để tạo mới, bấm ✏️ để sửa, 🗑️ để xóa.
 
 > ⚠️ Không thể xóa danh mục/vị trí đang có thiết bị liên kết.
 
@@ -236,7 +238,7 @@ npm run db:setup
 # Xóa database và tạo lại (mất toàn bộ dữ liệu)
 rm prisma/dev.db
 npm run db:setup
-# Đăng nhập lại với admin@hospital.vn / admin123
+# Đăng nhập lại với username: admin / mật khẩu: admin123
 ```
 
 ### Port 3000 đã bị chiếm

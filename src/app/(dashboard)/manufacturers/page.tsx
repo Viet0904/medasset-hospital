@@ -1,18 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Factory, Plus, Edit, Trash2, Save, X, Globe } from "lucide-react";
+import { Factory, Plus, Edit, Trash2, Save, X, Globe, ChevronLeft, ChevronRight } from "lucide-react";
+
+const PER_PAGE_OPTIONS = [10, 20, 50];
 
 export default function ManufacturersPage() {
-  const [manufacturers, setManufacturers] = useState<any[]>([]);
+  const [allManufacturers, setAllManufacturers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState({ name: "", website: "", phone: "" });
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
-  const load = () => fetch("/api/manufacturers").then((r) => r.json()).then(setManufacturers).finally(() => setLoading(false));
+  const load = () => fetch("/api/manufacturers").then((r) => r.json()).then(setAllManufacturers).finally(() => setLoading(false));
   useEffect(() => { load(); }, []);
+
+  const total = allManufacturers.length;
+  const totalPages = Math.ceil(total / perPage) || 1;
+  const manufacturers = allManufacturers.slice((page - 1) * perPage, page * perPage);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +40,7 @@ export default function ManufacturersPage() {
   };
 
   return (
-    <div className="fade-in space-y-6">
+    <div className="fade-in space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold flex items-center gap-2"><Factory size={24} className="text-orange-400" /> Nhà sản xuất</h1>
         <button onClick={() => { setShowForm(true); setEditing(null); setForm({ name: "", website: "", phone: "" }); }} className="btn-primary"><Plus size={18} /> Thêm</button>
@@ -54,21 +62,48 @@ export default function ManufacturersPage() {
         </form>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? <div className="col-span-3 text-center py-8"><div className="w-6 h-6 border-2 border-sky-500/30 border-t-sky-500 rounded-full animate-spin mx-auto" /></div> :
-          manufacturers.map((m) => (
-            <div key={m.id} className="glass-card glass-card-hover p-5">
-              <div className="flex items-start justify-between">
-                <div><h3 className="font-semibold">{m.name}</h3>{m.website && <a href={m.website} target="_blank" className="text-xs text-sky-400 flex items-center gap-1 mt-1 hover:underline"><Globe size={12} />{m.website}</a>}{m.phone && <p className="text-xs text-[var(--color-text-muted)] mt-1">📞 {m.phone}</p>}</div>
-                <div className="flex gap-1">
-                  <button onClick={() => handleEdit(m)} className="p-1.5 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-amber-400"><Edit size={14} /></button>
-                  <button onClick={() => handleDelete(m.id)} className="p-1.5 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-red-400"><Trash2 size={14} /></button>
-                </div>
-              </div>
-              <div className="mt-3"><span className="px-2 py-0.5 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-medium">{m._count?.assets || 0} thiết bị</span></div>
-            </div>
-          ))
-        }
+      <div className="glass-card flex flex-col" style={{ height: showForm ? "calc(100vh - 480px)" : "calc(100vh - 220px)", minHeight: "300px" }}>
+        <div className="flex-1 overflow-auto">
+          {loading ? (
+            <div className="flex items-center justify-center h-full"><div className="w-6 h-6 border-2 border-sky-500/30 border-t-sky-500 rounded-full animate-spin" /></div>
+          ) : (
+            <table>
+              <thead className="sticky top-0 z-10 bg-[var(--color-bg-card)]">
+                <tr><th>Tên NSX</th><th>Website</th><th>Điện thoại</th><th>Số thiết bị</th><th className="text-right">Thao tác</th></tr>
+              </thead>
+              <tbody>
+                {manufacturers.map((m) => (
+                  <tr key={m.id}>
+                    <td className="font-medium">{m.name}</td>
+                    <td>{m.website ? <a href={m.website} target="_blank" className="text-sm text-sky-400 hover:underline flex items-center gap-1"><Globe size={12} />{m.website}</a> : <span className="text-sm text-[var(--color-text-muted)]">—</span>}</td>
+                    <td className="text-sm">{m.phone || "—"}</td>
+                    <td><span className="px-2 py-0.5 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-medium">{m._count?.assets || 0} thiết bị</span></td>
+                    <td>
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => handleEdit(m)} className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-amber-400"><Edit size={16} /></button>
+                        <button onClick={() => handleDelete(m.id)} className="p-2 rounded-lg hover:bg-white/5 text-[var(--color-text-muted)] hover:text-red-400"><Trash2 size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--color-border)] flex-shrink-0">
+          <div className="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
+            <span>Hiển thị</span>
+            <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }} className="select-field w-auto py-1 px-2 text-xs">
+              {PER_PAGE_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+            <span>/ trang · Tổng {total}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[var(--color-text-muted)]">Trang {page}/{totalPages}</span>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1} className="btn-secondary py-1.5 px-2 disabled:opacity-40"><ChevronLeft size={16} /></button>
+            <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page >= totalPages} className="btn-secondary py-1.5 px-2 disabled:opacity-40"><ChevronRight size={16} /></button>
+          </div>
+        </div>
       </div>
     </div>
   );
