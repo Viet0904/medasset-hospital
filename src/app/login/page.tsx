@@ -134,7 +134,7 @@ export default function LoginPage() {
                     setUsername(acc.username);
                     setPassword(acc.pass);
                   }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-transparent hover:border-[var(--color-border)] transition-all text-[var(--color-text-secondary)]"
+                  className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-[var(--color-hover-bg)] border border-transparent hover:border-[var(--color-border)] transition-all text-[var(--color-text-secondary)]"
                 >
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{acc.role}</span>

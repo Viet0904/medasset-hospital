@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable server actions
+  devIndicators: false,
   experimental: {},
 };
 

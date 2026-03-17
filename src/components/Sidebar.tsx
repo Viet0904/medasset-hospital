@@ -19,9 +19,13 @@ import {
   Activity,
   Menu,
   ArrowLeftRight,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 import { useState } from "react";
 import { cn, hasPermission } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface NavItem {
   href: string;
@@ -48,6 +52,7 @@ export function Sidebar() {
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   const userRole = (session?.user as any)?.role || "STAFF";
 
@@ -127,6 +132,55 @@ export function Sidebar() {
             title="Đăng xuất"
           >
             <LogOut size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* Theme Toggle */}
+      <div className="border-t border-[var(--color-border)] px-3 py-2">
+        {!collapsed ? (
+          <div className="flex items-center gap-1 bg-[var(--color-bg-input)] rounded-lg p-1">
+            <button
+              onClick={() => setTheme("light")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all",
+                theme === "light" ? "bg-[var(--color-primary)] text-white shadow-sm" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+              )}
+              title="Sáng"
+            >
+              <Sun size={14} />
+              <span>Sáng</span>
+            </button>
+            <button
+              onClick={() => setTheme("dark")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all",
+                theme === "dark" ? "bg-[var(--color-primary)] text-white shadow-sm" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+              )}
+              title="Tối"
+            >
+              <Moon size={14} />
+              <span>Tối</span>
+            </button>
+            <button
+              onClick={() => setTheme("system")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all",
+                theme === "system" ? "bg-[var(--color-primary)] text-white shadow-sm" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+              )}
+              title="Hệ thống"
+            >
+              <Monitor size={14} />
+              <span>Auto</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : theme === "light" ? "system" : "dark")}
+            className="w-full flex justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded-lg hover:bg-[var(--color-hover-bg)]"
+            title={theme === "dark" ? "Chế độ tối" : theme === "light" ? "Chế độ sáng" : "Theo hệ thống"}
+          >
+            {resolvedTheme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
           </button>
         )}
       </div>

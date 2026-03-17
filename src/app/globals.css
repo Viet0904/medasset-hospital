@@ -4,13 +4,66 @@
   --color-primary: #0ea5e9;
   --color-primary-dark: #0284c7;
   --color-primary-light: #38bdf8;
+}
+
+/* ===== DARK THEME (mặc định) ===== */
+:root, .dark {
   --color-bg-dark: #0b1120;
   --color-bg-card: #111827;
   --color-bg-sidebar: #0f172a;
+  --color-bg-input: rgba(15, 23, 42, 0.8);
   --color-border: #1e293b;
+  --color-border-alpha: rgba(30, 41, 59, 0.8);
   --color-text-primary: #f1f5f9;
   --color-text-secondary: #94a3b8;
   --color-text-muted: #64748b;
+  --color-glass-from: rgba(17, 24, 39, 0.8);
+  --color-glass-to: rgba(15, 23, 42, 0.6);
+  --color-glass-shadow: rgba(0, 0, 0, 0.3);
+  --color-btn-secondary-bg: rgba(30, 41, 59, 0.8);
+  --color-btn-secondary-border: rgba(51, 65, 85, 0.8);
+  --color-btn-secondary-hover: rgba(51, 65, 85, 0.8);
+  --color-btn-secondary-hover-text: #e2e8f0;
+  --color-input-border: rgba(51, 65, 85, 0.8);
+  --color-table-th-bg: rgba(15, 23, 42, 0.6);
+  --color-table-border: rgba(30, 41, 59, 0.8);
+  --color-table-td-border: rgba(30, 41, 59, 0.4);
+  --color-table-hover: rgba(14, 165, 233, 0.05);
+  --color-table-text: #e2e8f0;
+  --color-scrollbar: #334155;
+  --color-scrollbar-hover: #475569;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --color-hover-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== LIGHT THEME ===== */
+.light {
+  --color-bg-dark: #f1f5f9;
+  --color-bg-card: #ffffff;
+  --color-bg-sidebar: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-alpha: rgba(226, 232, 240, 1);
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-glass-from: rgba(255, 255, 255, 0.9);
+  --color-glass-to: rgba(248, 250, 252, 0.8);
+  --color-glass-shadow: rgba(0, 0, 0, 0.08);
+  --color-btn-secondary-bg: #f1f5f9;
+  --color-btn-secondary-border: #e2e8f0;
+  --color-btn-secondary-hover: #e2e8f0;
+  --color-btn-secondary-hover-text: #0f172a;
+  --color-input-border: #cbd5e1;
+  --color-table-th-bg: #f8fafc;
+  --color-table-border: #e2e8f0;
+  --color-table-td-border: #f1f5f9;
+  --color-table-hover: rgba(14, 165, 233, 0.06);
+  --color-table-text: #334155;
+  --color-scrollbar: #cbd5e1;
+  --color-scrollbar-hover: #94a3b8;
+  --color-overlay: rgba(0, 0, 0, 0.3);
+  --color-hover-bg: rgba(0, 0, 0, 0.04);
 }
 
 @layer base {
@@ -25,6 +78,7 @@
     background-color: var(--color-bg-dark);
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::-webkit-scrollbar {
@@ -35,21 +89,22 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: var(--color-scrollbar);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: var(--color-scrollbar-hover);
   }
 }
 
 @layer components {
   .glass-card {
-    background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(15, 23, 42, 0.6));
+    background: linear-gradient(135deg, var(--color-glass-from), var(--color-glass-to));
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(30, 41, 59, 0.8);
+    border: 1px solid var(--color-border-alpha);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px var(--color-glass-shadow);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .glass-card-hover {
@@ -94,13 +149,13 @@
   }
 
   .btn-secondary {
-    background: rgba(30, 41, 59, 0.8);
-    color: #94a3b8;
+    background: var(--color-btn-secondary-bg);
+    color: var(--color-text-secondary);
     padding: 10px 20px;
     border-radius: 10px;
     font-weight: 500;
     font-size: 14px;
-    border: 1px solid rgba(51, 65, 85, 0.8);
+    border: 1px solid var(--color-btn-secondary-border);
     cursor: pointer;
     transition: all 0.3s ease;
     display: inline-flex;
@@ -108,9 +163,9 @@
     gap: 8px;
   }
   .btn-secondary:hover {
-    background: rgba(51, 65, 85, 0.8);
-    color: #e2e8f0;
-    border-color: rgba(71, 85, 105, 0.8);
+    background: var(--color-btn-secondary-hover);
+    color: var(--color-btn-secondary-hover-text);
+    border-color: var(--color-input-border);
   }
 
   .btn-danger {
@@ -135,10 +190,10 @@
   .input-field {
     width: 100%;
     padding: 10px 14px;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(51, 65, 85, 0.8);
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-input-border);
     border-radius: 10px;
-    color: #f1f5f9;
+    color: var(--color-text-primary);
     font-size: 14px;
     transition: all 0.3s ease;
     outline: none;
@@ -148,16 +203,16 @@
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
   }
   .input-field::placeholder {
-    color: #64748b;
+    color: var(--color-text-muted);
   }
 
   .select-field {
     width: 100%;
     padding: 10px 14px;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(51, 65, 85, 0.8);
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-input-border);
     border-radius: 10px;
-    color: #f1f5f9;
+    color: var(--color-text-primary);
     font-size: 14px;
     transition: all 0.3s ease;
     outline: none;
@@ -172,7 +227,7 @@
   .table-container {
     overflow-x: auto;
     border-radius: 12px;
-    border: 1px solid rgba(30, 41, 59, 0.8);
+    border: 1px solid var(--color-border-alpha);
   }
   .table-container table,
   .glass-card table {
@@ -187,17 +242,17 @@
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #94a3b8;
-    background: rgba(15, 23, 42, 0.6);
-    border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+    color: var(--color-text-secondary);
+    background: var(--color-table-th-bg);
+    border-bottom: 1px solid var(--color-table-border);
     white-space: nowrap;
   }
   .table-container td,
   .glass-card td {
     padding: 14px 16px;
     font-size: 14px;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.4);
-    color: #e2e8f0;
+    border-bottom: 1px solid var(--color-table-td-border);
+    color: var(--color-table-text);
   }
   .table-container tr,
   .glass-card tr {
@@ -205,7 +260,7 @@
   }
   .table-container tbody tr:hover,
   .glass-card tbody tr:hover {
-    background: rgba(14, 165, 233, 0.05);
+    background: var(--color-table-hover);
   }
 
   .status-badge {
