@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String    @unique            // Tên đăng nhập (bắt buộc)
+  name          String                       // Họ tên hiển thị
+  email         String?                      // Email (tùy chọn)
+  password      String
+  role          String    @default("STAFF")  // ADMIN, MANAGER, STAFF
+  permissions   String    @default("{}")     // JSON: {"canCreate":true,"canEdit":true,"canDelete":false,"canExport":true}
+  avatar        String?
+  phone         String?
+  department    String?
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  checkouts     AssetCheckout[]
+  auditLogs     AuditLog[]
+  maintenanceLogs MaintenanceLog[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets      Asset[]
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets      Asset[]
+}
+
+model Manufacturer {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  website     String?
+  phone       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets      Asset[]
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets      Asset[]
+}
+
+model Asset {
+  id              String   @id @default(cuid())
+  assetTag        String   @unique
+  name            String
+  serial          String?
+  status          String   @default("AVAILABLE") // AVAILABLE, IN_USE, MAINTENANCE, BROKEN, DISPOSED
+  purchaseDate    DateTime?
+  purchaseCost    Float?
+  warrantyExpiry  DateTime?
+  notes           String?
+  image           String?
+
+  categoryId      String?
+  category        Category?     @relation(fields: [categoryId], references: [id])
+
+  locationId      String?
+  location        Location?     @relation(fields: [locationId], references: [id])
+
+  manufacturerId  String?
+  manufacturer    Manufacturer? @relation(fields: [manufacturerId], references: [id])
+
+  supplierId      String?
+  supplier        Supplier?     @relation(fields: [supplierId], references: [id])
+
+  assignedToId    String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  checkouts       AssetCheckout[]
+  maintenanceLogs MaintenanceLog[]
+}
+
+model AssetCheckout {
+  id            String    @id @default(cuid())
+  assetId       String
+  asset         Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  checkoutDate  DateTime  @default(now())
+  checkinDate   DateTime?
+  expectedReturn DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+}
+
+model MaintenanceLog {
+  id              String    @id @default(cuid())
+  assetId         String
+  asset           Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  performedById   String
+  performedBy     User      @relation(fields: [performedById], references: [id])
+  maintenanceType String    // PREVENTIVE, CORRECTIVE, INSPECTION
+  title           String
+  description     String?
+  cost            Float?
+  startDate       DateTime  @default(now())
+  endDate         DateTime?
+  status          String    @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  action      String   // CREATE, UPDATE, DELETE, CHECKOUT, CHECKIN
+  entityType  String   // ASSET, USER, CATEGORY, LOCATION, etc.
+  entityId    String?
+  details     String?
+  createdAt   DateTime @default(now())
+}
